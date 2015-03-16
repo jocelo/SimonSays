@@ -231,28 +231,33 @@ public class MainActivity extends ActionBarActivity {
         if (foco) {
             Log.d(TAG,"  * foco prendido");
 //            color[0] = buttonULColor[0];
-            color[0] = colors.get(0).get(0);
-            color[1] = buttonULColor[1];
+//            color[0] = colors.get(0).get(0);
+//            color[1] = buttonULColor[1];
             color[2] = 1.0f;
             foco = false;
             token_id++;
         } else {
             Log.d(TAG,"  - foco apagado");
 //            color[0] = buttonULColor[0];
-            color[0] = colors.get(0).get(0);
-            color[1] = buttonULColor[1];
+//            color[0] = colors.get(0).get(0);
+//            color[1] = buttonULColor[1];
             color[2] = 0.6f;
             Log.d(TAG, "color 1->"+ Float.toString(color[0]) );
             Log.d(TAG, "color 2->"+ Float.toString(color[1]) );
             Log.d(TAG, "color 3->"+ Float.toString(color[2]) );
             foco = true;
         }
-        buttons.get(0).setBackgroundColor(Color.HSVToColor(color));
+        color[0] = colors.get(token_id).get(0);
+        color[1] = colors.get(token_id).get(1);
+
+        Integer tok = tokens.get(token_id)-1;
+        Log.d(TAG,"Valor de token "+tok);
+        buttons.get(tok).setBackgroundColor(Color.HSVToColor(color));
 
         Log.d(TAG,"Paso "+step);
         Log.d(TAG,"Posicion en tokens "+token_id);
-        String tok = tokens.get(token_id).toString();
-        Log.d(TAG,"Valor de token "+tok);
+//        String tokStr = tokens.get(token_id).toString();
+//        Log.d(TAG,"Valor de token "+tok);
 
         if (step == 6) {
             updateTimer.cancel();
