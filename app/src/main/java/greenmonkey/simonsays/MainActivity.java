@@ -247,6 +247,8 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "color 3->"+ Float.toString(color[2]) );
             foco = true;
         }
+        // ToDo: Check this values from the token_id
+        //
         color[0] = colors.get(token_id).get(0);
         color[1] = colors.get(token_id).get(1);
 
