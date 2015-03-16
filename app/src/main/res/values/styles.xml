@@ -1,0 +1,27 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="up_left">
+        <item name="android:background">#009930</item>
+        <item name="android:tag">#009930</item>
+    </style>
+
+    <style name="up_right">
+        <item name="android:background">#999900</item>
+        <item name="android:tag">#999900</item>
+    </style>
+
+    <style name="down_left">
+        <item name="android:background">#99000f</item>
+        <item name="android:tag">#99000f</item>
+    </style>
+
+    <style name="down_right">
+        <item name="android:background">#080594</item>
+        <item name="android:tag">#080594</item>
+    </style>
+</resources>
