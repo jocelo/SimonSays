@@ -249,15 +249,15 @@ public class MainActivity extends ActionBarActivity {
         }
         // ToDo: Check this values from the token_id
         //
-        color[0] = colors.get(token_id).get(0);
-        color[1] = colors.get(token_id).get(1);
 
-        Integer tok = tokens.get(token_id)-1;
+        Integer tok = tokens.get(token_id);
         Log.d(TAG,"Valor de token "+tok);
-        buttons.get(tok).setBackgroundColor(Color.HSVToColor(color));
 
-        Log.d(TAG,"Paso "+step);
+        color[0] = colors.get(tok).get(0);
+        color[1] = colors.get(tok).get(1);
+        buttons.get(tok).setBackgroundColor(Color.HSVToColor(color));
         Log.d(TAG,"Posicion en tokens "+token_id);
+        Log.d(TAG,"Color que sera seleccionado: "+color[0]);
 //        String tokStr = tokens.get(token_id).toString();
 //        Log.d(TAG,"Valor de token "+tok);
 
@@ -284,7 +284,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void insertNewToken() {
-        int token = generator.nextInt(4)+1;
+        int token = generator.nextInt(3);
         tokens.add(token);
     }
 
