@@ -54,8 +54,11 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpInterface();
-        initiateGame();
+        //initiateGame();
+        //bindLayoutsEvents();
+    }
 
+    public void bindLayoutsEvents() {
         buttonUL.setOnTouchListener(new View.OnTouchListener() {
             float temp;
             @Override
@@ -67,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     buttonULColor[2] = temp;
                     buttonUL.setBackgroundColor( Color.HSVToColor(buttonULColor) );
-                    checkTurn(1);
+                    checkTurn(0);
                 }
                 return true;
             }
@@ -83,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     buttonURColor[2] = temp;
                     buttonUR.setBackgroundColor( Color.HSVToColor(buttonURColor) );
-                    checkTurn(2);
+                    checkTurn(1);
                 }
                 return true;
             }
@@ -99,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     buttonDLColor[2] = temp;
                     buttonDL.setBackgroundColor( Color.HSVToColor(buttonDLColor) );
-                    checkTurn(3);
+                    checkTurn(2);
                 }
                 return true;
             }
@@ -115,7 +118,70 @@ public class MainActivity extends ActionBarActivity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     buttonDRColor[2] = temp;
                     buttonDR.setBackgroundColor( Color.HSVToColor(buttonDRColor) );
-                    checkTurn(4);
+                    checkTurn(3);
+                }
+                return true;
+            }
+        });
+    }
+
+    public void unbindLayoutsEvents() {
+        buttonUL.setOnTouchListener(new View.OnTouchListener() {
+            float temp;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    temp = buttonULColor[2];
+                    buttonULColor[2] = 1.0f;
+                    buttonUL.setBackgroundColor(Color.HSVToColor(buttonULColor));
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    buttonULColor[2] = temp;
+                    buttonUL.setBackgroundColor( Color.HSVToColor(buttonULColor) );
+                }
+                return true;
+            }
+        });
+        buttonUR.setOnTouchListener(new View.OnTouchListener() {
+            float temp;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    temp = buttonURColor[2];
+                    buttonURColor[2] = 1.0f;
+                    buttonUR.setBackgroundColor(Color.HSVToColor(buttonURColor));
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    buttonURColor[2] = temp;
+                    buttonUR.setBackgroundColor( Color.HSVToColor(buttonURColor) );
+                }
+                return true;
+            }
+        });
+        buttonDL.setOnTouchListener(new View.OnTouchListener() {
+            float temp;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    temp = buttonDLColor[2];
+                    buttonDLColor[2] = 1.0f;
+                    buttonDL.setBackgroundColor(Color.HSVToColor(buttonDLColor));
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    buttonDLColor[2] = temp;
+                    buttonDL.setBackgroundColor( Color.HSVToColor(buttonDLColor) );
+                }
+                return true;
+            }
+        });
+        buttonDR.setOnTouchListener(new View.OnTouchListener() {
+            float temp;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    temp = buttonDRColor[2];
+                    buttonDRColor[2] = 1.0f;
+                    buttonDR.setBackgroundColor(Color.HSVToColor(buttonDRColor));
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    buttonDRColor[2] = temp;
+                    buttonDR.setBackgroundColor( Color.HSVToColor(buttonDRColor) );
                 }
                 return true;
             }
@@ -148,6 +214,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startNewGame() {
+        tokens = new ArrayList<Integer>();
         DialogFragment new_game = new NewGameDialogFragment();
         new_game.show(getFragmentManager(), "new_game");
     }
@@ -202,32 +269,34 @@ public class MainActivity extends ActionBarActivity {
         colorsDetails.add(buttonDRColor[1]);
         colorsDetails.add(buttonDRColor[2]);
         colors.add(colorsDetails);
+        unbindLayoutsEvents();
     }
 
-    public boolean initiateGame() {
-        // clean vars
+    public void startVariables() {
+        // clean variables
         foco = true;
         position = 0;
         token_id = -1;
         step = 0;
-        tokens = new ArrayList<Integer>();
-        updateTimer = new Timer();
+        Log.d(TAG,"Variables initialized");
+        Log.d(TAG,"+++++++++++++++++++++");
+    }
 
+    public boolean initiateGame() {
+        startVariables();
+        //updateTimer = new Timer();
         for (int i=1; i<= difficulty; i++) {
             insertNewToken();
         }
-        Log.d(TAG, tokens.toString());
-        Log.d(TAG, "Game started !!!!");
+        Log.d(TAG,tokens.toString());
         playDemo();
         return true;
     }
 
-    public void update() {
+    public void runDemoHandler() {
         step++;
-        Log.d(TAG,"-----------");
-        Log.d(TAG,"paso "+step);
-        Log.d(TAG,"-----------");
         float[] color = new float[3];
+        Integer tope = tokens.size()*2;
         if (foco) {
             Log.d(TAG,"  * foco prendido");
 //            color[0] = buttonULColor[0];
@@ -242,32 +311,34 @@ public class MainActivity extends ActionBarActivity {
 //            color[0] = colors.get(0).get(0);
 //            color[1] = buttonULColor[1];
             color[2] = 0.6f;
-            Log.d(TAG, "color 1->"+ Float.toString(color[0]) );
-            Log.d(TAG, "color 2->"+ Float.toString(color[1]) );
-            Log.d(TAG, "color 3->"+ Float.toString(color[2]) );
+//            Log.d(TAG, "color 1->"+ Float.toString(color[0]) );
+//            Log.d(TAG, "color 2->"+ Float.toString(color[1]) );
+//            Log.d(TAG, "color 3->"+ Float.toString(color[2]) );
             foco = true;
         }
         // ToDo: Check this values from the token_id
         //
-
+        Log.d(TAG,"-----------");
+        Log.d(TAG,"paso "+step);
+        Log.d(TAG,"token id "+token_id);
+        Log.d(TAG,"-----------");
         Integer tok = tokens.get(token_id);
-        Log.d(TAG,"Valor de token "+tok);
+        Log.d(TAG,"  -> Valor de token "+tok);
 
         color[0] = colors.get(tok).get(0);
         color[1] = colors.get(tok).get(1);
         buttons.get(tok).setBackgroundColor(Color.HSVToColor(color));
-        Log.d(TAG,"Posicion en tokens "+token_id);
-        Log.d(TAG,"Color que sera seleccionado: "+color[0]);
+        //Log.d(TAG,"Color que sera seleccionado: "+color[0]);
 //        String tokStr = tokens.get(token_id).toString();
 //        Log.d(TAG,"Valor de token "+tok);
-
-        if (step == 6) {
+        if (step == tope) {
             updateTimer.cancel();
+            Toast.makeText(getApplicationContext(), "Go now!!", Toast.LENGTH_SHORT).show();
+            bindLayoutsEvents();
             Log.d(TAG,"Will exit immediately");
             return;
         }
     }
-
 
     public void checkTurn(int squarePressed) {
         Log.d(TAG,"pressed >"+squarePressed+" it should be a "+tokens.get(position).toString()+" at pos ["+position+"]");
@@ -278,33 +349,51 @@ public class MainActivity extends ActionBarActivity {
             validateNewToken();
         } else {
             Toast.makeText(getApplicationContext(), "Game Over!!!", Toast.LENGTH_SHORT).show();
-//            DialogFragment new_game = new GameOverDialogFragment();
-//            new_game.show(getFragmentManager(), "game_over");
+            DialogFragment new_game = new NewGameDialogFragment();
+            new_game.show(getFragmentManager(), "new_game");
         }
     }
 
     public void insertNewToken() {
-        int token = generator.nextInt(3);
-        tokens.add(token);
+        Integer lastToken, newToken;
+        if (tokens.size() == 0) {
+            lastToken = 0;
+        } else {
+            lastToken = tokens.get(tokens.size()-1);
+        }
+        newToken = lastToken;
+        //Log.d(TAG,tokens.toString());
+        //Log.d(TAG,"el ultimo insertado fue: "+lastToken);
+        //Log.d(TAG,"el supuesto id es: "+tokens.size());
+
+        while (lastToken==newToken) {
+            newToken = generator.nextInt(3);
+        }
+        //Log.d(TAG,"se ba a insertar este nuevo: "+newToken);
+        tokens.add(newToken);
     }
 
     public void validateNewToken() {
         if (position==tokens.size()) {
+            // aumentar el nivel
+            Toast.makeText(getApplicationContext(), "Next level", Toast.LENGTH_SHORT).show();
             insertNewToken();
-            position=0;
-            //playDemo();
+            startVariables();
+            playDemo();
         }
     }
 
     public void playDemo() {
-        updateTimer.schedule(new UpdateTask(new Handler(),this),1000,800);
+        unbindLayoutsEvents();
+        updateTimer = new Timer();
+        updateTimer.schedule(new DemoTask(new Handler(),this),1000,800);
     }
 
-    private class UpdateTask extends TimerTask {
+    private class DemoTask extends TimerTask {
         Handler handler;
         MainActivity ref;
 
-        public UpdateTask(Handler handler, MainActivity ref) {
+        public DemoTask(Handler handler, MainActivity ref) {
             super();
             this.handler = handler;
             this.ref = ref;
@@ -315,7 +404,7 @@ public class MainActivity extends ActionBarActivity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    update();
+                    runDemoHandler();
                 }
             });
         }
