@@ -9,11 +9,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,16 +26,15 @@ import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
     String TAG = "SIMON_SAYS";
-    LinearLayout buttonUL = null,
-        buttonUR = null,
-        buttonDL = null,
-        buttonDR = null;
+    static Integer topScore;
+    static long timeScore;
+    static long timeScoreFinal;
+    LinearLayout buttonUL, buttonUR, buttonDL, buttonDR;
     float[] buttonULColor = new float[3],
         buttonURColor = new float[3],
         buttonDLColor = new float[3],
         buttonDRColor = new float[3];
     List<Integer> tokens = new ArrayList<Integer>();
-    int difficulty = 3;
     Random generator = new Random();
     int position = 0;
     boolean foco = true;
@@ -44,18 +45,49 @@ public class MainActivity extends ActionBarActivity {
     ArrayList<Float> colorsDetails = new ArrayList<Float>();
     Timer updateTimer;
 
-//    <item name="android:tag">#009930</item>
-//    <item name="android:tag">#999900</item>
-//    <item name="android:tag">#99000f</item>
-//    <item name="android:background">#080594</item>
+    // TODO: add timer to stop executing when not pressed anything
+    // after 2 seconds
+    // http://stackoverflow.com/questions/24991572/finish-activity-after-timeout-if-user-dont-touch-screen
+
+    // TODO: add sounds
+
+    // TODO: add leaderboards
+
+    // TODO: remove multitouch
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpInterface();
+        playMode();
         //initiateGame();
         //bindLayoutsEvents();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.new_game:
+                startNewGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void bindLayoutsEvents() {
@@ -127,6 +159,33 @@ public class MainActivity extends ActionBarActivity {
 
     public void unbindLayoutsEvents() {
         buttonUL.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        buttonUR.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        buttonDL.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        buttonDR.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+    }
+
+    public void playMode() {
+        buttonUL.setOnTouchListener(new View.OnTouchListener() {
             float temp;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -186,31 +245,6 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        switch(id) {
-            case R.id.action_settings:
-                return true;
-            case R.id.new_game:
-                startNewGame();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     public void startNewGame() {
@@ -283,9 +317,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public boolean initiateGame() {
+        tokens = new ArrayList<Integer>();
         startVariables();
-        //updateTimer = new Timer();
-        for (int i=1; i<= difficulty; i++) {
+        for (int i=1; i<= 3; i++) {
             insertNewToken();
         }
         Log.d(TAG,tokens.toString());
@@ -297,6 +331,7 @@ public class MainActivity extends ActionBarActivity {
         step++;
         float[] color = new float[3];
         Integer tope = tokens.size()*2;
+        Log.d(TAG,"tope:"+tope);
         if (foco) {
             Log.d(TAG,"  * foco prendido");
 //            color[0] = buttonULColor[0];
@@ -316,8 +351,6 @@ public class MainActivity extends ActionBarActivity {
 //            Log.d(TAG, "color 3->"+ Float.toString(color[2]) );
             foco = true;
         }
-        // ToDo: Check this values from the token_id
-        //
         Log.d(TAG,"-----------");
         Log.d(TAG,"paso "+step);
         Log.d(TAG,"token id "+token_id);
@@ -335,6 +368,7 @@ public class MainActivity extends ActionBarActivity {
             updateTimer.cancel();
             Toast.makeText(getApplicationContext(), "Go now!!", Toast.LENGTH_SHORT).show();
             bindLayoutsEvents();
+            timeScore = System.currentTimeMillis();
             Log.d(TAG,"Will exit immediately");
             return;
         }
@@ -349,8 +383,8 @@ public class MainActivity extends ActionBarActivity {
             validateNewToken();
         } else {
             Toast.makeText(getApplicationContext(), "Game Over!!!", Toast.LENGTH_SHORT).show();
-            DialogFragment new_game = new NewGameDialogFragment();
-            new_game.show(getFragmentManager(), "new_game");
+            DialogFragment new_game = new ShowLeaderboards();
+            new_game.show(getFragmentManager(), "game_over");
         }
     }
 
@@ -367,7 +401,8 @@ public class MainActivity extends ActionBarActivity {
         //Log.d(TAG,"el supuesto id es: "+tokens.size());
 
         while (lastToken==newToken) {
-            newToken = generator.nextInt(3);
+            newToken = generator.nextInt(4);
+            Log.d(TAG,"Token generated: "+newToken.toString());
         }
         //Log.d(TAG,"se ba a insertar este nuevo: "+newToken);
         tokens.add(newToken);
@@ -375,8 +410,10 @@ public class MainActivity extends ActionBarActivity {
 
     public void validateNewToken() {
         if (position==tokens.size()) {
+            timeScoreFinal = System.currentTimeMillis()-timeScore;
+            topScore = tokens.size();
             // aumentar el nivel
-            Toast.makeText(getApplicationContext(), "Next level", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Level "+topScore.toString(), Toast.LENGTH_SHORT).show();
             insertNewToken();
             startVariables();
             playDemo();
@@ -444,6 +481,39 @@ public class MainActivity extends ActionBarActivity {
                         }
                     });
 
+            return builder.create();
+        }
+    }
+
+    public static class ShowLeaderboards extends DialogFragment {
+        String scores;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+
+            final View inflator = inflater.inflate(R.layout.game_over, null);
+            TextView textSelector;
+            String finalScore;
+            finalScore = "Level: "+topScore.toString();
+            finalScore += "\nTime: "+Long.toString(timeScoreFinal);
+            textSelector = (TextView) inflator.findViewById(R.id.scoring);
+
+            builder.setView(inflator)
+                    .setTitle(R.string.game_over)
+                    .setPositiveButton(R.string.new_game, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            ((MainActivity) getActivity()).initiateGame();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            ((MainActivity) getActivity()).playMode();
+                        }
+                    });
+            textSelector.setText(finalScore);
             return builder.create();
         }
     }
