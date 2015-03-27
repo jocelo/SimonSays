@@ -1,6 +1,5 @@
 package greenmonkey.simonsays;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -8,13 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 
 public class leaderboardsActivity extends ActionBarActivity {
     TableLayout scoresTable;
@@ -35,7 +32,6 @@ public class leaderboardsActivity extends ActionBarActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         TableRow tableRow;
         TextView _place, _level, _score;
-        View _line;
 
         tableRow = new TableRow(this);
         _place = new TextView(this);
@@ -55,9 +51,9 @@ public class leaderboardsActivity extends ActionBarActivity {
         for (int i=0 ; i<scoresArray.length ; i++) {
             String[] score = new String[2];
             score = scoresArray[i].split(",");
-            Log.d("LOG",Integer.toString(i)+" -> ["+score[0]+":"+score[1]+"]");
 
             tableRow = new TableRow(this);
+            tableRow.setPadding(5,5,5,5);
             _place = new TextView(this);
             _level = new TextView(this);
             _score = new TextView(this);
@@ -72,25 +68,7 @@ public class leaderboardsActivity extends ActionBarActivity {
 
             scoresTable.addView(tableRow);
         }
-
-//        for (int i=0 ; i<50 ; i++) {
-//            tableRow = new TableRow(this);
-//            _place = new TextView(this);
-//            _level = new TextView(this);
-//            _score = new TextView(this);
-//
-//            _place.setText(Integer.toString(i));
-//            _level.setText("7");
-//            _score.setText("19182");
-//
-//            tableRow.addView(_place);
-//            tableRow.addView(_level);
-//            tableRow.addView(_score);
-//
-//            scoresTable.addView(tableRow);
-//        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,5 +100,16 @@ public class leaderboardsActivity extends ActionBarActivity {
         scores = settings.getString("top_scores","0,0|0,0|0,0|0,0|0,0|0,0|0,0|0,0|0,0|0,0");
 
         return scores.split("\\|");
+    }
+
+    public void removeValue(Context context) {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        settings = context.getSharedPreferences("SS_SH", Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        editor.remove("top_scores");
+        editor.commit();
     }
 }

@@ -91,8 +91,8 @@ public class MainActivity extends ActionBarActivity {
                 startNewGame();
                 return true;
             case R.id.leaderboards:
-                Intent intent = new Intent(this, leaderboardsActivity.class);
-                startActivity(intent);
+                showLeaderBoards();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -261,6 +261,11 @@ public class MainActivity extends ActionBarActivity {
         new_game.show(getFragmentManager(), "new_game");
     }
 
+    public void showLeaderBoards() {
+        Intent intent = new Intent(this, leaderboardsActivity.class);
+        startActivity(intent);
+    }
+
     public void setUpInterface() {
         buttonUL = (LinearLayout) findViewById(R.id.up_left);
         buttonUR = (LinearLayout) findViewById(R.id.up_right);
@@ -320,15 +325,12 @@ public class MainActivity extends ActionBarActivity {
         position = 0;
         token_id = -1;
         step = 0;
-        Log.d(TAG,"Variables initialized");
-        Log.d(TAG,"+++++++++++++++++++++");
     }
 
     public boolean initiateGame() {
         tokens = new ArrayList<Integer>();
         startVariables();
         insertNewToken();
-        Log.d(TAG,tokens.toString());
         playDemo();
         return true;
     }
@@ -337,55 +339,31 @@ public class MainActivity extends ActionBarActivity {
         step++;
         float[] color = new float[3];
         Integer tope = tokens.size()*2;
-        Log.d(TAG,"tope:"+tope);
         if (foco) {
-            Log.d(TAG,"  * foco prendido");
-//            color[0] = buttonULColor[0];
-//            color[0] = colors.get(0).get(0);
-//            color[1] = buttonULColor[1];
             color[2] = 1.0f;
             foco = false;
             token_id++;
         } else {
-            Log.d(TAG,"  - foco apagado");
-//            color[0] = buttonULColor[0];
-//            color[0] = colors.get(0).get(0);
-//            color[1] = buttonULColor[1];
             color[2] = 0.6f;
-//            Log.d(TAG, "color 1->"+ Float.toString(color[0]) );
-//            Log.d(TAG, "color 2->"+ Float.toString(color[1]) );
-//            Log.d(TAG, "color 3->"+ Float.toString(color[2]) );
             foco = true;
         }
-        Log.d(TAG,"-----------");
-        Log.d(TAG,"paso "+step);
-        Log.d(TAG,"token id "+token_id);
-        Log.d(TAG,"-----------");
         Integer tok = tokens.get(token_id);
-        Log.d(TAG,"  -> Valor de token "+tok);
 
         color[0] = colors.get(tok).get(0);
         color[1] = colors.get(tok).get(1);
         buttons.get(tok).setBackgroundColor(Color.HSVToColor(color));
-        //Log.d(TAG,"Color que sera seleccionado: "+color[0]);
-//        String tokStr = tokens.get(token_id).toString();
-//        Log.d(TAG,"Valor de token "+tok);
         if (step == tope) {
             updateTimer.cancel();
             Toast.makeText(getApplicationContext(), "Go now!!", Toast.LENGTH_SHORT).show();
             bindLayoutsEvents();
             timeScore = System.currentTimeMillis();
-            Log.d(TAG,"Will exit immediately");
             return;
         }
     }
 
     public void checkTurn(int squarePressed) {
-        //Log.d(TAG,"pressed >"+squarePressed+" it should be a "+tokens.get(position).toString()+" at pos ["+position+"]");
-        Log.d(TAG,tokens.toString());
         if (squarePressed == tokens.get(position)) {
             position += 1;
-            //Log.d(TAG,"YES!!!");
             validateNewToken();
         } else {
             // TODO: Save high score
@@ -404,15 +382,10 @@ public class MainActivity extends ActionBarActivity {
             lastToken = tokens.get(tokens.size()-1);
         }
         newToken = lastToken;
-        //Log.d(TAG,tokens.toString());
-        //Log.d(TAG,"el ultimo insertado fue: "+lastToken);
-        //Log.d(TAG,"el supuesto id es: "+tokens.size());
 
         while (lastToken==newToken) {
             newToken = generator.nextInt(4);
-            Log.d(TAG,"Token generated: "+newToken.toString());
         }
-        //Log.d(TAG,"se ba a insertar este nuevo: "+newToken);
         tokens.add(newToken);
     }
 
@@ -465,8 +438,6 @@ public class MainActivity extends ActionBarActivity {
 
             finalScores += highScores[i]+(i<9 ? "|" : "");
         }
-
-        Log.d(TAG,finalScores);
 
         shpEditor = shpScores.edit();
         shpEditor.putString("top_scores",finalScores);
@@ -529,6 +500,7 @@ public class MainActivity extends ActionBarActivity {
             finalScore = "Level: "+Integer.toString(topScore - 1);
             finalScore += "\nTime: "+Long.toString(timeScoreFinal);
             textSelector = (TextView) inflator.findViewById(R.id.scoring);
+            ((MainActivity) getActivity()).playMode();
 
             builder.setView(inflator)
                     .setTitle(R.string.game_over)
@@ -538,10 +510,10 @@ public class MainActivity extends ActionBarActivity {
                             ((MainActivity) getActivity()).initiateGame();
                         }
                     })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.leaderboards, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            ((MainActivity) getActivity()).playMode();
+                            ((MainActivity) getActivity()).showLeaderBoards();
                         }
                     });
             textSelector.setText(finalScore);
