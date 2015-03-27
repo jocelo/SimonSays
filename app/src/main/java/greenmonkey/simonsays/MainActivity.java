@@ -3,7 +3,10 @@ package greenmonkey.simonsays;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -25,7 +28,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
-    String TAG = "SIMON_SAYS";
+    final String H_SCORES = "SS_HS";
+    final String H_SCORES_TOKEN = "top_scores";
+    final String TAG = "SIMON_SAYS";
     static Integer topScore;
     static long timeScore;
     static long timeScoreFinal;
@@ -51,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
 
     // TODO: add sounds
 
-    // TODO: add leaderboards
+    // done: add leaderboards
 
     // TODO: remove multitouch
 
@@ -85,6 +90,9 @@ public class MainActivity extends ActionBarActivity {
             case R.id.new_game:
                 startNewGame();
                 return true;
+            case R.id.leaderboards:
+                Intent intent = new Intent(this, leaderboardsActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -319,9 +327,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean initiateGame() {
         tokens = new ArrayList<Integer>();
         startVariables();
-        for (int i=1; i<= 3; i++) {
-            insertNewToken();
-        }
+        insertNewToken();
         Log.d(TAG,tokens.toString());
         playDemo();
         return true;
@@ -375,15 +381,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void checkTurn(int squarePressed) {
-        Log.d(TAG,"pressed >"+squarePressed+" it should be a "+tokens.get(position).toString()+" at pos ["+position+"]");
+        //Log.d(TAG,"pressed >"+squarePressed+" it should be a "+tokens.get(position).toString()+" at pos ["+position+"]");
         Log.d(TAG,tokens.toString());
         if (squarePressed == tokens.get(position)) {
             position += 1;
-            Log.d(TAG,"YES!!!");
+            //Log.d(TAG,"YES!!!");
             validateNewToken();
         } else {
+            // TODO: Save high score
+            saveHighScore(this, topScore-1, timeScoreFinal);
             Toast.makeText(getApplicationContext(), "Game Over!!!", Toast.LENGTH_SHORT).show();
-            DialogFragment new_game = new ShowLeaderboards();
+            DialogFragment new_game = new GameOverDialogFragment();
             new_game.show(getFragmentManager(), "game_over");
         }
     }
@@ -423,7 +431,46 @@ public class MainActivity extends ActionBarActivity {
     public void playDemo() {
         unbindLayoutsEvents();
         updateTimer = new Timer();
-        updateTimer.schedule(new DemoTask(new Handler(),this),1000,800);
+        updateTimer.schedule(new DemoTask(new Handler(),this),1000,600);
+    }
+
+    public void saveHighScore(Context context, Integer level, Long score ) {
+        SharedPreferences shpScores;
+        SharedPreferences.Editor shpEditor;
+        String[] highScores = new String[10];
+        String[] currentScore = new String[2];
+        Long longScore;
+        String finalScores="";
+        String stringScores;
+
+        shpScores = context.getSharedPreferences("SS_SH", Context.MODE_PRIVATE);
+        stringScores = shpScores.getString("top_scores","0,0|0,0|0,0|0,0|0,0|0,0|0,0|0,0|0,0|0,0");
+
+        highScores = stringScores.split("\\|");
+
+        for (int i=0 ; i<highScores.length ; i++) {
+            currentScore = highScores[i].split(",");
+            // if high score in level achieved
+            if ( level > Integer.parseInt(currentScore[0]) ) {
+                highScores[i] = level.toString()+","+Long.toString(score);
+                level = Integer.parseInt(currentScore[0]);
+                score = Long.parseLong(currentScore[1]);
+            }
+
+            if ( level == Integer.parseInt(currentScore[0]) && score<Long.parseLong(currentScore[1]) ) {
+                highScores[i] = level.toString()+","+Long.toString(score);
+                level = Integer.parseInt(currentScore[0]);
+                score = Long.parseLong(currentScore[1]);
+            }
+
+            finalScores += highScores[i]+(i<9 ? "|" : "");
+        }
+
+        Log.d(TAG,finalScores);
+
+        shpEditor = shpScores.edit();
+        shpEditor.putString("top_scores",finalScores);
+        shpEditor.commit();
     }
 
     private class DemoTask extends TimerTask {
@@ -470,22 +517,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public static class GameOverDialogFragment extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstance) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.game_over)
-                    .setPositiveButton(R.string.new_game, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((MainActivity) getActivity()).initiateGame();
-                        }
-                    });
-
-            return builder.create();
-        }
-    }
-
-    public static class ShowLeaderboards extends DialogFragment {
         String scores;
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -495,7 +526,7 @@ public class MainActivity extends ActionBarActivity {
             final View inflator = inflater.inflate(R.layout.game_over, null);
             TextView textSelector;
             String finalScore;
-            finalScore = "Level: "+topScore.toString();
+            finalScore = "Level: "+Integer.toString(topScore - 1);
             finalScore += "\nTime: "+Long.toString(timeScoreFinal);
             textSelector = (TextView) inflator.findViewById(R.id.scoring);
 
