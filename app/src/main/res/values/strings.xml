@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SimonSays</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Memory Game</string>
     <string name="settings">Settings</string>
     <string name="new_game">New Game</string>
     <string name="confirm_new_game">Are you sure you want to start a new game?</string>
     <string name="game_over">Game Over !</string>
     <string name="game_over_desc">Would you like to try again?</string>
     <string name="game_over_quote">Own only what you can carry with you; know language, know countries, know people. Let your memory be your travel bag.
-- Alexander Solzhenitsyn </string>
+- Alexander Solzhenitsyn</string>
     <string name="leaderboards">Leaderboards</string>
     <string name="high_scores">high_scores</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_leaderboards">leaderboardsActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_home">home</string>
+    <string name="home_title">Ψ-mon Memory Game</string>
+    <string name="exit">Leave for today</string>
 
 </resources>
