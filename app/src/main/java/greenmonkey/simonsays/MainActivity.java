@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,10 +31,16 @@ public class MainActivity extends ActionBarActivity {
     final String H_SCORES = "SS_HS";
     final String H_SCORES_TOKEN = "top_scores";
     final String TAG = "SIMON_SAYS";
+    SharedPreferences game_settings;
     static Integer topScore;
     static long timeScore;
     static long timeScoreFinal;
-    LinearLayout buttonUL, buttonUR, buttonDL, buttonDR;
+    static int DEMO_SPEED;
+    static int GAME_SPEED;
+    static boolean VIBRATE;
+    Vibrator vib;
+    View buttonUL, buttonUR, buttonDL, buttonDR;
+    TextView levelLabel,timeLabel;
     float[] buttonULColor = new float[3],
         buttonURColor = new float[3],
         buttonDLColor = new float[3],
@@ -45,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
     boolean foco = true;
     int token_id = -1;
     int step = 0;
-    List<LinearLayout> buttons = new ArrayList<LinearLayout>();
+    List<View> buttons = new ArrayList<View>();
     ArrayList<ArrayList<Float>> colors = new ArrayList<ArrayList<Float>>();
     ArrayList<Float> colorsDetails = new ArrayList<Float>();
     Timer updateTimer;
@@ -86,6 +92,7 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
         switch(id) {
             case R.id.action_settings:
+                startActivity(new Intent( getApplicationContext(), settingsActivity.class));
                 return true;
             case R.id.new_game:
                 startNewGame();
@@ -267,10 +274,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void setUpInterface() {
-        buttonUL = (LinearLayout) findViewById(R.id.up_left);
-        buttonUR = (LinearLayout) findViewById(R.id.up_right);
-        buttonDL = (LinearLayout) findViewById(R.id.down_left);
-        buttonDR = (LinearLayout) findViewById(R.id.down_right);
+        levelLabel = (TextView) findViewById(R.id.level_label);
+        timeLabel = (TextView) findViewById(R.id.time_label);
+        buttonUL = (View) findViewById(R.id.up_left);
+        buttonUR = (View) findViewById(R.id.up_right);
+        buttonDL = (View) findViewById(R.id.down_left);
+        buttonDR = (View) findViewById(R.id.down_right);
         buttons.add(buttonUL);
         buttons.add(buttonUR);
         buttons.add(buttonDL);
@@ -316,11 +325,17 @@ public class MainActivity extends ActionBarActivity {
         colorsDetails.add(buttonDRColor[1]);
         colorsDetails.add(buttonDRColor[2]);
         colors.add(colorsDetails);
+
+        game_settings = getApplicationContext().getSharedPreferences("SS_SH",Context.MODE_PRIVATE);
+        vib = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         unbindLayoutsEvents();
     }
 
     public void startVariables() {
         // clean variables
+        DEMO_SPEED = game_settings.getInt("demo_speed",700);
+        GAME_SPEED = game_settings.getInt("game_speed", 1000);
+        VIBRATE = game_settings.getBoolean("vibrate", true);
         foco = true;
         position = 0;
         token_id = -1;
@@ -329,6 +344,7 @@ public class MainActivity extends ActionBarActivity {
 
     public boolean initiateGame() {
         tokens = new ArrayList<Integer>();
+
         startVariables();
         insertNewToken();
         playDemo();
@@ -353,9 +369,11 @@ public class MainActivity extends ActionBarActivity {
         color[1] = colors.get(tok).get(1);
         buttons.get(tok).setBackgroundColor(Color.HSVToColor(color));
         if (step == tope) {
+
             updateTimer.cancel();
             Toast.makeText(getApplicationContext(), "Go now!!", Toast.LENGTH_SHORT).show();
             bindLayoutsEvents();
+            if (VIBRATE) { vib.vibrate(50); }
             timeScore = System.currentTimeMillis();
             return;
         }
@@ -372,6 +390,7 @@ public class MainActivity extends ActionBarActivity {
             DialogFragment new_game = new GameOverDialogFragment();
             new_game.show(getFragmentManager(), "game_over");
         }
+        timeLabel.setText("0099");
     }
 
     public void insertNewToken() {
@@ -393,8 +412,9 @@ public class MainActivity extends ActionBarActivity {
         if (position==tokens.size()) {
             timeScoreFinal = System.currentTimeMillis()-timeScore;
             topScore = tokens.size();
-            // aumentar el nivel
-            Toast.makeText(getApplicationContext(), "Level "+topScore.toString(), Toast.LENGTH_SHORT).show();
+            // Raising the level
+            levelLabel.setText("Level "+topScore.toString());
+            //Toast.makeText(getApplicationContext(), "Level "+topScore.toString(), Toast.LENGTH_SHORT).show();
             insertNewToken();
             startVariables();
             playDemo();
@@ -404,7 +424,7 @@ public class MainActivity extends ActionBarActivity {
     public void playDemo() {
         unbindLayoutsEvents();
         updateTimer = new Timer();
-        updateTimer.schedule(new DemoTask(new Handler(),this),1000,600);
+        updateTimer.schedule(new DemoTask(new Handler(),this),1000,DEMO_SPEED);
     }
 
     public void saveHighScore(Context context, Integer level, Long score ) {

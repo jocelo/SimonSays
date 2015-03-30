@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:padding="0px"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,14 +8,72 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="greenmonkey.simonsays.home">
+    tools:context="greenmonkey.simonsays.home"
+    style="@style/home_screen" >
 
-    <TextView android:text="@string/home_title" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView android:text="@string/new_game" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView android:text="@string/high_scores" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView android:text="@string/exit" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/app_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/home_title"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/new_game"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center|fill"
+        android:text="@string/play" />
+    <Button
+        android:id="@+id/high_scores"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center|fill"
+        android:text="@string/high_scores" />
+    <Button
+        android:id="@+id/settings"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center|fill"
+        android:text="@string/settings" />
+    <Button
+        android:id="@+id/exit"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center|fill"
+        android:text="@string/exit" />
+    <LinearLayout style="@style/colored_bar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp">
+        <View android:id="@+id/square_1" style="@style/up_left"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+        <View android:id="@+id/square_2" style="@style/up_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+        <View android:id="@+id/square_3" style="@style/down_left"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+        <View android:id="@+id/square_4" style="@style/down_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+        </LinearLayout>
 </LinearLayout>

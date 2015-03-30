@@ -1,19 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:gravity="clip_horizontal"
-    android:tileMode="repeat"
-    android:background="@drawable/background"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="0px"
+    android:paddingRight="0px"
+    android:paddingTop="0px"
+    android:paddingBottom="0px" >
 
     <TableLayout
-        android:padding="25dp"
-        android:id="@+id/scores_table"
-        android:layout_width="match_parent"
-        android:layout_height="322dp"
-        android:layout_gravity="center_horizontal">
-
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <TableRow
+            android:layout_height="20dp"
+            android:layout_width="fill_parent">
+            <View
+                android:background="@drawable/gradient_top"
+                android:layout_weight="1"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp" />
+        </TableRow>
+        <TableRow
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_width="fill_parent">
+            <View
+                android:background="@drawable/gradient_left"
+                android:layout_width="20dp" />
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:id="@+id/scores_table"
+                android:orientation="vertical"
+                android:layout_weight="1" >
+                <View style="@style/divisor" />
+            </LinearLayout>
+            <View
+                android:background="@drawable/gradient_right"
+                android:layout_width="20dp" />
+        </TableRow>
+        <TableRow
+            android:layout_height="20dp"
+            android:layout_width="fill_parent">
+            <View
+                android:background="@drawable/gradient_bottom"
+                android:layout_weight="1"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp" />
+        </TableRow>
     </TableLayout>
 </LinearLayout>

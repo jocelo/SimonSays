@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Memory Game</string>
+    <string name="app_name">Ψ-mon Memory Game</string>
     <string name="settings">Settings</string>
     <string name="new_game">New Game</string>
     <string name="confirm_new_game">Are you sure you want to start a new game?</string>
@@ -10,13 +10,17 @@
     <string name="game_over_quote">Own only what you can carry with you; know language, know countries, know people. Let your memory be your travel bag.
 - Alexander Solzhenitsyn</string>
     <string name="leaderboards">Leaderboards</string>
-    <string name="high_scores">high_scores</string>
+    <string name="high_scores">High Scores</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
-    <string name="title_activity_leaderboards">leaderboardsActivity</string>
+    <string name="title_activity_leaderboards">Ψ-mon Leaderboards</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_home">home</string>
+    <string name="title_activity_home">Memory Game</string>
     <string name="home_title">Ψ-mon Memory Game</string>
-    <string name="exit">Leave for today</string>
-
+    <string name="exit">Exit</string>
+    <string name="play">Play!</string>
+    <string name="title_activity_settings">Ψ-mon Settings</string>
+    <string name="demo_speed">Demo Speed</string>
+    <string name="game_speed">Game Speed</string>
+    <string name="vibration">Vibration</string>
 </resources>

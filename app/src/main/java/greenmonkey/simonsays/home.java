@@ -1,19 +1,25 @@
 package greenmonkey.simonsays;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class home extends ActionBarActivity {
-
+    //View sqr1, sqr2, sqr3, sqr4;
+    Button btnNewGame, btnHighScores, btnSettings, btnExit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-    }
+        //TODO: Animate squares below
+        setButtonActions();
 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -35,5 +41,39 @@ public class home extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setButtonActions() {
+        btnNewGame = (Button) findViewById(R.id.new_game);
+        btnNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), MainActivity.class));
+            }
+        });
+
+        btnHighScores = (Button) findViewById(R.id.high_scores);
+        btnHighScores.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), leaderboardsActivity.class));
+            }
+        });
+
+        btnSettings = (Button) findViewById(R.id.settings);
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), settingsActivity.class));
+            }
+        });
+
+        btnExit = (Button) findViewById(R.id.exit);
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
